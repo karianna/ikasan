@@ -40,6 +40,7 @@
  */
 package org.ikasan.flow.visitorPattern.invoker;
 
+import org.ikasan.flow.event.FlowElementInvocationFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.flow.*;
 
@@ -57,9 +58,12 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Broker> flowElement)
     {
+        // keep this for legacy sake
         flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
         Broker broker = flowElement.getFlowComponent();
         if(requiresFullEventForInvocation == null)
         {
@@ -107,7 +111,7 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
                 flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
             }
         }
-
+        endFlowElementInvocation(flowElementInvocation, flowElement);
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)
         {

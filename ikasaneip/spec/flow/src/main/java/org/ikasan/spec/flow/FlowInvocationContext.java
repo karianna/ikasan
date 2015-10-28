@@ -50,21 +50,41 @@ import java.util.List;
  */
 public interface FlowInvocationContext
 {
+
+    /**
+     * Indicate a flow has started
+     */
+    void startFlow();
+
+    /**
+     * Indicate the flow has completed
+     */
+    void endFlow();
+
+
+    /**
+     * Add an FlowElement invocation event
+     * @param flowElementInvocation the invocation
+     */
+    void addInvocation(FlowElementInvocation flowElementInvocation);
+
     /**
      * Get the name of the last invoked component recorded in the context.
      * @return componentName
      */
-	public String getLastComponentName();
+    String getLastComponentName();
 	
 	/**
 	 * Add an invoked componentName to the context.
-	 * @param componentName
+	 * @param componentName the name of the component
+     * @deprecated should use addInvocation() instead
 	 */
-	public void addInvokedComponentName(String componentName);
+    void addInvokedComponentName(String componentName);
 
-	/**
-	 * Return a list of all invoked componentNames
-	 * @return List componentNames
-	 */
-	public List<String> getInvokedComponents();
+
+    /**
+     * Get the List of invocation events
+     * @return the List of invocations
+     */
+    List<FlowElementInvocation> getInvocations();
 }

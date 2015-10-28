@@ -59,7 +59,7 @@ public class ProducerFlowElementInvoker extends AbstractFlowElementInvoker imple
     {
         flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
         Producer producer = flowElement.getFlowComponent();
         if(requiresFullEventForInvocation == null)
         {
@@ -86,7 +86,7 @@ public class ProducerFlowElementInvoker extends AbstractFlowElementInvoker imple
                 producer.invoke(flowEvent.getPayload());
             }
         }
-
+        endFlowElementInvocation(flowElementInvocation, flowElement);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // producer is last in the flow
         return null;

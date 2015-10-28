@@ -63,15 +63,7 @@ import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
 import org.ikasan.flow.visitorPattern.ExclusionFlowConfiguration;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
-import org.ikasan.flow.visitorPattern.invoker.BrokerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ConsumerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ConverterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterConfiguration;
-import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.ProducerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.SequencerFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.SingleRecipientRouterFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.invoker.TranslatorFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -286,7 +278,7 @@ public class FlowBuilder
     }
     
     /**
-	 * @param ikasanSerialiserFactory the ikasanSerialiserFactory to set
+	 * @param serialiserFactory the ikasanSerialiserFactory to set
 	 */
 	public FlowBuilder withSerialiserFactory(SerialiserFactory serialiserFactory)
 	{
@@ -305,7 +297,7 @@ public class FlowBuilder
     
     /**
      * Setter for re-submission service
-     * @param monitor
+     * @param resubmissionService
      */
     public void setResubmissionService(ResubmissionService resubmissionService)
     {
@@ -355,7 +347,7 @@ public class FlowBuilder
 	 */
 	public class FlowConfigurationBuilder
 	{
-		// keep hold of the flowBuilder isntance
+		// keep hold of the flowBuilder instance
 		FlowBuilder flowBuilder;
 		
 		// flow elements being configured
@@ -365,7 +357,7 @@ public class FlowBuilder
 		FlowElement lastFlowElement;
 
         /** allow FE's to have their invoker behaviour configured */
-        Object flowElementInvokerConfiguration;
+        DefaultFlowElementInvokerConfiguration flowElementInvokerConfiguration;
 
         /**
 		 * Constructor

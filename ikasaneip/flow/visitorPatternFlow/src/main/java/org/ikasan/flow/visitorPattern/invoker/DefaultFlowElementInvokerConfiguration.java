@@ -40,37 +40,23 @@
  */
 package org.ikasan.flow.visitorPattern.invoker;
 
-import org.ikasan.flow.visitorPattern.InvalidFlowException;
-import org.ikasan.spec.component.transformation.Translator;
-import org.ikasan.spec.flow.*;
-
 /**
- * A default implementation of the FlowElementInvoker for a translator
+ * Default configuration for the FlowElementInvoker implementations
  *
  * @author Ikasan Development Team
  */
-@SuppressWarnings("unchecked")
-public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Translator>
-{
-    @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Translator> flowElement)
-    {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
-        Translator translator = flowElement.getFlowComponent();
-        translator.translate(flowEvent.getPayload());
-        endFlowElementInvocation(flowElementInvocation, flowElement);
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        // sort out the next element
-        FlowElement previousFlowElement = flowElement;
-        flowElement = getDefaultTransition(flowElement);
-        if (flowElement == null)
-        {
-            throw new InvalidFlowException("FlowElement [" + previousFlowElement.getComponentName()
-                    + "] contains a Translator, but it has no default transition! " + "Translators should never be the last component in a flow");
-        }
-        return flowElement;
+public class DefaultFlowElementInvokerConfiguration {
+
+    /** Flag to enable/disable the capture of FlowElement invocations
+     * Defaults to true */
+    private boolean captureInvocations = true;
+
+    /** Accessors */
+    public boolean isCaptureInvocations() {
+        return captureInvocations;
+    }
+
+    public void setCaptureInvocations(boolean captureInvocations) {
+        this.captureInvocations = captureInvocations;
     }
 }
-

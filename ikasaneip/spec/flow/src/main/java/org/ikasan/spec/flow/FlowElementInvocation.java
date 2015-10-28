@@ -38,39 +38,55 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern.invoker;
-
-import org.ikasan.flow.visitorPattern.InvalidFlowException;
-import org.ikasan.spec.component.transformation.Translator;
-import org.ikasan.spec.flow.*;
+package org.ikasan.spec.flow;
 
 /**
- * A default implementation of the FlowElementInvoker for a translator
- *
+ * Contract for a model of an invocation of a FlowElement. This effectively holds meta-data regarding
+ * the invocations of FlowElements for a specific event
  * @author Ikasan Development Team
+ *
  */
-@SuppressWarnings("unchecked")
-public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Translator>
-{
-    @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Translator> flowElement)
-    {
-        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
-        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
-        Translator translator = flowElement.getFlowComponent();
-        translator.translate(flowEvent.getPayload());
-        endFlowElementInvocation(flowElementInvocation, flowElement);
-        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-        // sort out the next element
-        FlowElement previousFlowElement = flowElement;
-        flowElement = getDefaultTransition(flowElement);
-        if (flowElement == null)
-        {
-            throw new InvalidFlowException("FlowElement [" + previousFlowElement.getComponentName()
-                    + "] contains a Translator, but it has no default transition! " + "Translators should never be the last component in a flow");
-        }
-        return flowElement;
-    }
-}
+public interface FlowElementInvocation<IDENTIFIER> {
 
+    /**
+     * Called before the FlowElement is invoked by the FlowElementInvoker
+     * @param flowElement the FlowElement
+     */
+    void beforeInvocation(FlowElement flowElement);
+
+    /**
+     * Called after the FlowElement is invoked by the FlowElementInvoker
+     * @param flowElement
+     */
+    void afterInvocation(FlowElement flowElement);
+
+    /**
+     * Get the underlying FlowElement that was invoked
+     * @return the FlowElement
+     */
+    FlowElement getFlowElement();
+
+    /**
+     * Get the start time of the invocation in milliseconds
+     * @return the epoch time in milliseconds when this FlowElement was invoked
+     */
+    long getStartTime();
+
+    /**
+     * Get the end time of the invocation in milliseconds
+     * @return the epoch time in milliseconds after the FlowElement was invoked
+     */
+    long getEndTime();
+
+    /**
+     * Returns the identifier for the this invocation
+     * @return the IDENTIFIER
+     */
+    IDENTIFIER getIdentifier();
+
+    /**
+     * Sets the identifier
+     * @param identifier
+     */
+    void setIdentifier(IDENTIFIER identifier);
+}

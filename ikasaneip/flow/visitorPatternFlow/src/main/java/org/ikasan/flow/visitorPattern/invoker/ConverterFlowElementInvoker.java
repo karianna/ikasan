@@ -61,6 +61,7 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
         flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
         Converter converter = flowElement.getFlowComponent();
 
         if(requiresFullEventForInvocation == null)
@@ -110,7 +111,7 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker impl
                 flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
             }
         }
-
+        endFlowElementInvocation(flowElementInvocation, flowElement);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;

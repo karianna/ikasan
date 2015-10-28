@@ -69,16 +69,14 @@ public class SingleRecipientRouterFlowElementInvokerTest
     private FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
     private FlowEvent flowEvent = mockery.mock(FlowEvent.class, "flowEvent");
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
-    private FlowElementInvoker flowElementInvoker = mockery.mock(FlowElementInvoker.class, "flowElementInvoker");
     private SingleRecipientRouter router = mockery.mock(SingleRecipientRouter.class, "singleRecipientRouter");
-    private ReplicationFactory replicationFactory = mockery.mock(ReplicationFactory.class, "replicationFactory");
     private Map payload = mockery.mock(Map.class, "payload");
 
     @Test
     @SuppressWarnings("unchecked")
     public void test_router_flowElementInvoker_single_target()
     {
-        final String route = new String("one");
+        final String route = "one";
 
         // expectations
         mockery.checking(new Expectations()
@@ -87,6 +85,10 @@ public class SingleRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -119,6 +121,10 @@ public class SingleRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -138,10 +144,11 @@ public class SingleRecipientRouterFlowElementInvokerTest
         mockery.assertIsSatisfied();
     }
 
+    @Test(expected = InvalidFlowException.class)
     @SuppressWarnings("unchecked")
     public void test_router_flowElementInvoker_no_next_flow_element_for_single_route()
     {
-        final String route = new String("one");
+        final String route = "one";
 
         // expectations
         mockery.checking(new Expectations()
@@ -150,6 +157,10 @@ public class SingleRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();

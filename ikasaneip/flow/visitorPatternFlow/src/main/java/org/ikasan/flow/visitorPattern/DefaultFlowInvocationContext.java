@@ -42,17 +42,16 @@
 package org.ikasan.flow.visitorPattern;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.ikasan.spec.flow.FlowElementInvocation;
 import org.ikasan.spec.flow.FlowInvocationContext;
 
 /**
- * This class acts as a transfer object holding flow invocation time data relevent only
+ * This class acts as a transfer object holding flow invocation time data relevant only
  * to a single invocation of an Event down a Flow. 
- * 
- * At time of writing, the only data item that we are interested in is the name of the last
- * component invoked, and only then when dealing with an error scenario.
- * 
+ *
  * Unlike the FlowEvent object, the same FlowInvocation object will be present immediately prior
  * to the invocation of any component in a flow. The FlowEvents of course may be split, aggregated, etc.
  * 
@@ -68,7 +67,17 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
 	/**
 	 * a stack of the names of all components invoked so far
 	 */
-	private List<String> invokedComponents = new ArrayList<String>();
+	private List<String> invokedComponentNames = new ArrayList<>();
+
+	/** a LinkedList of all the invocations for the current event in this Flow */
+    private LinkedList<FlowElementInvocation> invocations = new LinkedList<>();
+
+    /** the epoch time the flow was started by this event */
+    private long flowStartTimeMillis;
+
+    /** the epoch time the flow completed */
+    private long flowEndTimeMillis;
+
 
 	/**
 	 * Accessor for the name of the last component invoked
@@ -78,10 +87,15 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
 	public String getLastComponentName()
 	{
 		String lastComponentName = null;
-		if (!invokedComponents.isEmpty())
+		if (!invokedComponentNames.isEmpty())
 		{
-			lastComponentName = invokedComponents.get(invokedComponents.size()-1);
+			lastComponentName = invokedComponentNames.get(invokedComponentNames.size()-1);
 		}
+        else if (!invocations.isEmpty())
+        {
+            lastComponentName = invocations.getLast().getFlowElement().getComponentName();
+        }
+
 		return lastComponentName;
 	}
 	
@@ -92,17 +106,37 @@ public class DefaultFlowInvocationContext implements FlowInvocationContext
 	 */
 	public void addInvokedComponentName(String componentName)
 	{
-		invokedComponents.add(componentName);
+        invokedComponentNames.add(componentName);
 	}
 
-	/**
-	 * Safe accessor for the entire stack of invoked components
-	 * 
-	 * @return List of componentNames of all invoked components
-	 */
-	public List<String> getInvokedComponents()
-	{
-		return new ArrayList<String>(invokedComponents);
-	}
+
+    @Override
+    public void addInvocation(FlowElementInvocation flowElementInvocation) {
+        invocations.add(flowElementInvocation);
+    }
+
+    @Override
+    public List<FlowElementInvocation> getInvocations() {
+        return invocations;
+    }
+
+    @Override
+    public void startFlow() {
+        this.flowStartTimeMillis = System.currentTimeMillis();
+    }
+
+    @Override
+    public void endFlow() {
+        this.flowEndTimeMillis = System.currentTimeMillis();
+    }
+
+    public long getFlowStartTimeMillis() {
+        return flowStartTimeMillis;
+    }
+
+    public long getFlowEndTimeMillis() {
+        return flowEndTimeMillis;
+    }
+
 
 }

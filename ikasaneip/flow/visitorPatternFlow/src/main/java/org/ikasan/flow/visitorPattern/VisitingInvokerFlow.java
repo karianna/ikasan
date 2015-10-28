@@ -581,6 +581,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     public void invoke(FlowEvent<?,?> event)
     {
         FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
+        flowInvocationContext.startFlow();
 
         // keep a handle on the original assigned eventLifeId as this could change within the flow
         Object originalEventLifeIdentifier = event.getIdentifier();
@@ -608,9 +609,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                     this.recoveryManager.cancel();
                 }
             }
+            flowInvocationContext.endFlow();
         }
         catch(Throwable throwable)
         {
+            flowInvocationContext.endFlow();
             this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event, originalEventLifeIdentifier);
         }
         finally

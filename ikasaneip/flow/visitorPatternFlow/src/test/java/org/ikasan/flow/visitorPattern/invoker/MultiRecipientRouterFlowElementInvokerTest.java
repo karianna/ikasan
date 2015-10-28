@@ -95,7 +95,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
     @SuppressWarnings("unchecked")
     public void test_router_flowElementInvoker_single_target()
     {
-        final List<String> routes = new ArrayList<String>();
+        final List<String> routes = new ArrayList<>();
         routes.add("one");
 
         // expectations
@@ -105,6 +105,10 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -130,7 +134,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
     @SuppressWarnings("unchecked")
     public void test_router_flowElementInvoker_multiple_targets()
     {
-        final List<String> routes = new ArrayList<String>();
+        final List<String> routes = new ArrayList<>();
         routes.add("one");
         routes.add("two");
 
@@ -141,6 +145,10 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -191,7 +199,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
     @SuppressWarnings("unchecked")
     public void test_router_flowElementInvoker_multiple_targets_no_cloning()
     {
-        final List<String> routes = new ArrayList<String>();
+        final List<String> routes = new ArrayList<>();
         routes.add("one");
         routes.add("two");
 
@@ -202,6 +210,10 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -257,6 +269,10 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -280,7 +296,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
     @SuppressWarnings("unchecked")
     public void test_router_flowElementInvoker_no_target()
     {
-        final List<String> routes = new ArrayList<String>();
+        final List<String> routes = new ArrayList<>();
 
         // expectations
         mockery.checking(new Expectations()
@@ -289,6 +305,10 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -322,6 +342,10 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();
@@ -349,7 +373,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
     @SuppressWarnings("unchecked")
     public void test_router_flowElementInvoker_no_next_flow_multiple_targets()
     {
-        final List<String> routes = new ArrayList<String>();
+        final List<String> routes = new ArrayList<>();
         routes.add("one");
         routes.add("two");
 
@@ -360,6 +384,10 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowElement).getComponentName();
                 will(returnValue("componentName"));
                 exactly(1).of(flowInvocationContext).addInvokedComponentName("componentName");
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addInvocation(with(any(FlowElementInvocation.class)));
+
                 exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
                 exactly(1).of(flowElement).getFlowComponent();

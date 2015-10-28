@@ -63,7 +63,7 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
     {
         flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
         Splitter splitter = flowElement.getFlowComponent();
         List payloads;
         if(requiresFullEventForInvocation == null)
@@ -91,6 +91,7 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
                 payloads = splitter.split(flowEvent.getPayload());
             }
         }
+        endFlowElementInvocation(flowElementInvocation, flowElement);
 
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)

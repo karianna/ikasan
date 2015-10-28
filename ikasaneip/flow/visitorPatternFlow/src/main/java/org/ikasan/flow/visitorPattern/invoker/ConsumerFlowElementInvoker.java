@@ -58,8 +58,9 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
         flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
         // nothing to do for consumers
-
+        endFlowElementInvocation(flowElementInvocation, flowElement);
         notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;

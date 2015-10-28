@@ -92,7 +92,7 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     CONFIGURATION configuration;
 
     /** allow FE's to have their invoker behaviour configured */
-    Object flowElementInvokerConfiguration;
+    DefaultFlowElementInvokerConfiguration flowElementInvokerConfiguration;
 
     /**
      * Setter for name
@@ -143,7 +143,7 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
      * Allow the flow element invoker configuration to be mutated
      * @param flowElementInvokerConfiguration
      */
-    public void setFlowElementInvokerConfiguration(Object flowElementInvokerConfiguration)
+    public void setFlowElementInvokerConfiguration(DefaultFlowElementInvokerConfiguration flowElementInvokerConfiguration)
     {
         this.flowElementInvokerConfiguration = flowElementInvokerConfiguration;
     }
@@ -215,29 +215,30 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     /**
      * Get the correct instance of an invoker based on the component type.
      * @param component
-     * @return
+     * @return A FlowElementInvoker configured accordingly
      */
     protected FlowElementInvoker getFlowElementInvoker(COMPONENT component)
     {
+        AbstractFlowElementInvoker flowElementInvoker;
         if(component instanceof Consumer)
         {
-            return new ConsumerFlowElementInvoker();
+            flowElementInvoker =  new ConsumerFlowElementInvoker();
         }
         else if(component instanceof Translator)
         {
-            return new TranslatorFlowElementInvoker();
+            flowElementInvoker = new TranslatorFlowElementInvoker();
         }
         else if(component instanceof Converter)
         {
-            return new ConverterFlowElementInvoker();
+            flowElementInvoker = new ConverterFlowElementInvoker();
         }
         else if(component instanceof Producer)
         {
-            return new ProducerFlowElementInvoker();
+            flowElementInvoker = new ProducerFlowElementInvoker();
         }
         else if(component instanceof Broker)
         {
-            return new BrokerFlowElementInvoker();
+            flowElementInvoker = new BrokerFlowElementInvoker();
         }
         else if(component instanceof Router)
         {
@@ -253,7 +254,7 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
                 }
             }
 
-            return new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
+            flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
         }
         else if(component instanceof MultiRecipientRouter)
         {
@@ -269,27 +270,29 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
                 }
             }
 
-            return new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
+            flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
         }
         else if(component instanceof SingleRecipientRouter)
         {
-            return new SingleRecipientRouterFlowElementInvoker();
+            flowElementInvoker =  new SingleRecipientRouterFlowElementInvoker();
         }
         else if(component instanceof Sequencer)
         {
-            return new SequencerFlowElementInvoker();
+            flowElementInvoker = new SequencerFlowElementInvoker();
         }
         else if(component instanceof Splitter)
         {
-            return new SplitterFlowElementInvoker();
+            flowElementInvoker = new SplitterFlowElementInvoker();
         }
         else if(component instanceof Filter)
         {
-            return new FilterFlowElementInvoker();
+            flowElementInvoker = new FilterFlowElementInvoker();
         }
         else
         {
             throw new RuntimeException("Unknown FlowComponent type[" + component.getClass() + "]");
         }
+        flowElementInvoker.setDefaultFlowElementInvokerConfiguration(flowElementInvokerConfiguration);
+        return (FlowElementInvoker)flowElementInvoker;
     }
 }

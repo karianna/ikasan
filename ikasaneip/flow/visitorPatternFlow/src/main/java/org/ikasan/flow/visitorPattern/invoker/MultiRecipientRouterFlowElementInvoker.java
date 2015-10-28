@@ -95,8 +95,10 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
         flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
+        FlowElementInvocation flowElementInvocation = beginFlowElementInvocation(flowInvocationContext, flowElement, flowEvent);
         MultiRecipientRouter router = flowElement.getFlowComponent();
         List<String> targetNames = router.route(flowEvent.getPayload());
+        endFlowElementInvocation(flowElementInvocation, flowElement);
         if (targetNames == null || targetNames.size() == 0)
         {
             throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Router without a valid transition. "
