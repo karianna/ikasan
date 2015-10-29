@@ -59,7 +59,7 @@ public class ComponentTimingLoggingListener implements FlowInvocationContextList
     @Override
     public void endFlow(FlowInvocationContext flowInvocationContext)
     {
-        if (flowInvocationContext.getInvocations() != null)
+        if (flowInvocationContext.getInvocations() != null && !flowInvocationContext.getInvocations().isEmpty())
         {
             StringBuilder sb = new StringBuilder("Flow Invocation: ");
             List<FlowElementInvocation> invocations = flowInvocationContext.getInvocations();
