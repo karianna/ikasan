@@ -38,77 +38,49 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.event;
+package org.ikasan.flow.context;
 
-import org.ikasan.spec.flow.FlowElement;
+import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.FlowElementInvocation;
+import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.flow.FlowInvocationContextListener;
+
+import java.util.List;
 
 /**
- * Simple static factory for creating FlowElementInvocation objects
+ * Simple Listener that will log the FlowInvocationContext component timing statistics
  *
  * @author Ikasan Development Team
  */
-public class FlowElementInvocationFactory {
+public class ComponentTimingLoggingListener implements FlowInvocationContextListener
+{
+    private static final Logger logger = Logger.getLogger(ComponentTimingLoggingListener.class);
 
-    private FlowElementInvocationFactory(){}
-
-    /**
-     * Returns a new FlowElementInvocation object
-     * @return a new FlowElementInvocation object
-     */
-    public static FlowElementInvocation newInvocation()
+    @Override
+    public void endFlow(FlowInvocationContext flowInvocationContext)
     {
-        return new DefaultFlowElementInvocation();
-    }
+        if (flowInvocationContext.getInvocations() != null)
+        {
+            StringBuilder sb = new StringBuilder("Flow Invocation: ");
+            List<FlowElementInvocation> invocations = flowInvocationContext.getInvocations();
+            // log the IDENTIFIER (should not be null but be careful just in case)
+            Object identifier = invocations.get(invocations.size() - 1).getIdentifier();
+            if (identifier != null)
+            {
+                sb.append("ID [").append(identifier).append("] ");
+            }
+            // log start an end epoch times
+            sb.append("Start [").append(flowInvocationContext.getFlowStartTimeMillis()).append("] ");
+            sb.append("End [").append(flowInvocationContext.getFlowEndTimeMillis()).append("] ");
 
-    /**
-     * Default implementation of the FlowElementInvocation
-     */
-    public static class DefaultFlowElementInvocation implements FlowElementInvocation
-    {
-        /** the start and end times (epoch) of the FlowElement invocation */
-        private volatile long startTime, endTime;
-
-        /** handle to the FlowElement that is invoked */
-        private FlowElement flowElement;
-
-        /** the FlowEvent IDENTIFIER */
-        private Object identifier;
-
-        @Override
-        public void beforeInvocation(FlowElement flowElement) {
-            startTime = System.currentTimeMillis();
-            this.flowElement = flowElement;
+            for (FlowElementInvocation invocation : invocations)
+            {
+                // log each element timing
+                sb.append("[Element [").append(invocation.getFlowElement().getComponentName()).append("]");
+                sb.append(" Time [").append(invocation.getEndTime() - invocation.getStartTime()).append("ms]] ");
+            }
+            logger.info(sb.toString());
         }
 
-        @Override
-        public void afterInvocation(FlowElement flowElement) {
-            endTime = System.currentTimeMillis();
-        }
-
-        @Override
-        public FlowElement getFlowElement() {
-            return flowElement;
-        }
-
-        @Override
-        public long getStartTime() {
-            return startTime;
-        }
-
-        @Override
-        public long getEndTime() {
-            return endTime;
-        }
-
-        @Override
-        public Object getIdentifier() {
-            return identifier;
-        }
-
-        @Override
-        public void setIdentifier(Object identifier) {
-            this.identifier = identifier;
-        }
     }
 }

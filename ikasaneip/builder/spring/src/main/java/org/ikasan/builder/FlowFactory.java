@@ -56,10 +56,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEventListener;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
@@ -71,6 +68,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import java.util.List;
 
 /**
  * Spring based FactoryBean for the creation of Ikasan Flows.
@@ -131,6 +130,9 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
     /** handle to the re-submission service */
     ResubmissionService resubmissionService;
+
+    /** List of listeners for the flow invocation context */
+    List<FlowInvocationContextListener> flowInvocationContextListeners;
 
     /**
      * Setter for moduleName
@@ -256,10 +258,19 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         this.resubmissionService = resubmissionService;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.beans.factory.FactoryBean#getObject()
+    /**
+     * Setter for the List of FlowInvocationContextListeners
+     * @param flowInvocationContextListeners
      */
+    public void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners)
+    {
+        this.flowInvocationContextListeners = flowInvocationContextListeners;
+    }
+
+    /*
+         * (non-Javadoc)
+         * @see org.springframework.beans.factory.FactoryBean#getObject()
+         */
     @Override
     public Flow getObject()
     {
@@ -305,6 +316,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
         final Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, ikasanSerialiserFactory);
         flow.setFlowListener(flowEventListener);
+        flow.setFlowInvocationContextListeners(flowInvocationContextListeners);
 
         // pass handle to the error reporting service if flow needs to be aware of this
         if(flow instanceof IsErrorReportingServiceAware)

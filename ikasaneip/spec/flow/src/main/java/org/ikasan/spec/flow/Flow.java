@@ -73,30 +73,36 @@ public interface Flow
      * 
      * @return list of flow elements
      */
-     public List<FlowElement<?>> getFlowElements();
+    public List<FlowElement<?>> getFlowElements();
 
-     /**
-      * Accessor for getting the flow element by its given name.
-      * If the name does not exist then null is returned.
-      * If more than one element exists with this name then the first one 
-      * encountered is returned.
-      * 
-      * @return list of flow elements
-      */
-      public FlowElement<?> getFlowElement(String name);
-      
-      /**
-       * Method to get the configuration for the given flow. 
-       * 
-       * @return the flow configuration.
-       */
-      public FlowConfiguration getFlowConfiguration();
+    /**
+     * Accessor for getting the flow element by its given name.
+     * If the name does not exist then null is returned.
+     * If more than one element exists with this name then the first one
+     * encountered is returned.
+     *
+     * @return list of flow elements
+     */
+    public FlowElement<?> getFlowElement(String name);
 
-      /**
-       * Setter for a listener for flow events
-       * @param flowEventListener
-       */
-       public void setFlowListener(FlowEventListener flowEventListener);
+    /**
+     * Method to get the configuration for the given flow.
+     *
+     * @return the flow configuration.
+     */
+    public FlowConfiguration getFlowConfiguration();
+
+    /**
+     * Setter for a listener for flow events
+     * @param flowEventListener
+     */
+    public void setFlowListener(FlowEventListener flowEventListener);
+
+    /**
+     * Setter for a List of listeners for the FlowInvocationContext
+     * @param flowInvocationContextListeners
+     */
+    void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners);
 
     /**
      * Invoke all start operations for the flow that are required prior to an event invocation including starting the consumer.

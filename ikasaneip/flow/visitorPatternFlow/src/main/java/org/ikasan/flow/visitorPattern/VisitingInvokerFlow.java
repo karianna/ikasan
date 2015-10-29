@@ -55,12 +55,7 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Monitor;
@@ -135,6 +130,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
     /** serialiserFactory handle */
     private SerialiserFactory serialiserFactory;
+
+    /** List of listeners for the end of the FlowInovation using the associated context */
+    private List<FlowInvocationContextListener> flowInvocationContextListeners;
 
     /**
      * Constructor
@@ -629,6 +627,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 	public void invoke(Resubmission<FlowEvent<?,?>> event)
 	{
 		FlowInvocationContext flowInvocationContext = createFlowInvocationContext();
+        flowInvocationContext.startFlow();
 
         try
         {
@@ -639,9 +638,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             {
                 this.recoveryManager.cancel();
             }
+            flowInvocationContext.endFlow();
         }
         catch(Throwable throwable)
         {
+            flowInvocationContext.endFlow();
             this.recoveryManager.recover(flowInvocationContext.getLastComponentName(), throwable, event.getEvent(), event.getEvent().getIdentifier());
         }
         finally
@@ -718,7 +719,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     }
     
     /**
-     * Notification to all registered <code>MonitorListener</code> of the current state of the <code>Initiator</code>
+     * Notification to all registered <code>MonitorListener</code> of the current state of the <code>Flow</code>
      */
     protected void notifyMonitor()
     {
@@ -728,13 +729,35 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             {
                 this.monitor.invoke(this.getState());
             }
-            catch(RuntimeException e)
+            catch (RuntimeException e)
             {
                 // don't let the failure of the monitor interfere with
                 // the operation of the business flow
                 logger.error("Failed to notify the registered monitor", e);
             }
         }
+    }
+
+    /**
+     * Notify any FlowInvocationContextListeners that the flow has completed
+     */
+    protected void notifyFlowInvocationContextListeners(FlowInvocationContext flowInvocationContext)
+    {
+        if (flowInvocationContextListeners != null)
+        {
+            for (FlowInvocationContextListener listener : flowInvocationContextListeners)
+            {
+                try
+                {
+                    listener.endFlow(flowInvocationContext);
+                }
+                catch (RuntimeException e)
+                {
+                    logger.error("Unable to invoke FlowInvocationContextListener, continuing", e);
+                }
+            }
+        }
+
     }
 
     /**
@@ -934,4 +957,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 		return this.serialiserFactory;
 	}
 
+
+    @Override
+    public void setFlowInvocationContextListeners(List<FlowInvocationContextListener> flowInvocationContextListeners)
+    {
+        this.flowInvocationContextListeners = flowInvocationContextListeners;
+    }
 }

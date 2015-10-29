@@ -87,4 +87,8 @@ public interface FlowInvocationContext
      * @return the List of invocations
      */
     List<FlowElementInvocation> getInvocations();
+
+    long getFlowStartTimeMillis();
+
+    long getFlowEndTimeMillis();
 }
