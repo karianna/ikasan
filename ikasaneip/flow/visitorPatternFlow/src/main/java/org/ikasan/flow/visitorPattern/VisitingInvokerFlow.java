@@ -69,6 +69,7 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
  * 
  * @author Ikasan Development Team
  */
+@SuppressWarnings(value = {"unchecked","javadoc"})
 public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject, IsErrorReportingServiceAware
 {
     /** logger instance */
@@ -131,7 +132,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** serialiserFactory handle */
     private SerialiserFactory serialiserFactory;
 
-    /** List of listeners for the end of the FlowInovation using the associated context */
+    /** List of listeners for the end of the FlowInvocation using the associated context */
     private List<FlowInvocationContextListener> flowInvocationContextListeners;
 
     /**
@@ -452,7 +453,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
         // start the consumer
         Consumer<EventListener<FlowEvent<?,?>>,EventFactory> consumer = consumerFlowElement.getFlowComponent();
-        consumer.setListener( (EventListener<FlowEvent<?,?>>)this );
+        consumer.setListener(this);
 
         // if event factory has not been set on the consumer then set the default
         if(consumer.getEventFactory() == null)
@@ -616,6 +617,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
         finally
         {
+            this.notifyFlowInvocationContextListeners(flowInvocationContext);
             this.notifyMonitor();
         }
     }
@@ -647,6 +649,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
         finally
         {
+            this.notifyFlowInvocationContextListeners(flowInvocationContext);
             this.notifyMonitor();
         }
 	}
@@ -661,6 +664,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
             catch(RuntimeException e)
             {
+                // why is this here, its not actually invoked in this method?
                 flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
                 throw e;
             }
@@ -677,6 +681,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
             catch(RuntimeException e)
             {
+                // why is this here, its not actually invoked in this method?
                 flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
                 throw e;
             }
@@ -854,7 +859,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     protected class ManagedResourceRecoveryManagerFactory
     {
         // cache of managed resource recovery managers
-        private Map<String,ManagedResourceRecoveryManager> managedResourceRecoveryManagers = new HashMap<String,ManagedResourceRecoveryManager>();
+        private Map<String,ManagedResourceRecoveryManager> managedResourceRecoveryManagers = new HashMap<>();
         
         /**
          * Get the named managed resource recovery manager

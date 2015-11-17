@@ -54,7 +54,7 @@ import java.util.List;
  */
 public class ComponentTimingLoggingListener implements FlowInvocationContextListener
 {
-    private static final Logger logger = Logger.getLogger(ComponentTimingLoggingListener.class);
+    protected static Logger logger = Logger.getLogger(ComponentTimingLoggingListener.class);
 
     @Override
     public void endFlow(FlowInvocationContext flowInvocationContext)
